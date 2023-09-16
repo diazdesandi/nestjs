@@ -5,15 +5,14 @@ import {
   Get,
   Param,
   ParseUUIDPipe,
+  Patch,
   Post,
-  Put,
 } from "@nestjs/common";
 import { CarsService } from "./cars.service";
 import { Car } from "src/cars/interfaces/cars.interface";
-import { CreateCarDto } from "./dto/create-car.dto";
+import { CreateCarDto, UpdateCarDto } from "./dto";
 
 // Controlador escucha la lógica y regresa una respuesta.
-
 @Controller("cars")
 // Se aplica el Pipe a todos los métodos.
 // @UsePipes(ValidationPipe)
@@ -37,19 +36,19 @@ export class CarsController {
   @Post()
   // @UsePipes(ValidationPipe)
   addCar(@Body() createCarDto: CreateCarDto) {
-  addCar(@Body() body: Car) {
-    return body;
+    return this.carsService.add(createCarDto);
   }
 
-  @Put(":id")
-  updateCar(@Body() body: Car) {
-    return body;
+  @Patch(":id")
+  updateCar(
+    @Param("id", ParseUUIDPipe) id: string,
+    @Body() updateCarDto: UpdateCarDto
+  ) {
+    return this.carsService.update(id, updateCarDto);
   }
+
   @Delete(":id")
   removeCar(@Param("id", ParseUUIDPipe) id: string) {
-    return {
-      msg: "Delete",
-      id,
-    };
+    return this.carsService.delete(id);
   }
 }
