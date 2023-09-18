@@ -3,6 +3,10 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  // Agrega prefijo global de "pokemon" a "api/pokemon"
+  app.setGlobalPrefix('api/v2');
+
   await app.listen(3000);
 }
 bootstrap();
