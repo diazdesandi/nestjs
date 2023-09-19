@@ -3,6 +3,9 @@
 /node_modules
 dist
 node_modules
+mongo/
+mongo
+/mongo
 
 # Logs
 logs
