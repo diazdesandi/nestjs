@@ -8,6 +8,7 @@ mongo
 /mongo
 
 .env
+.env.prod
 
 # Logs
 logs

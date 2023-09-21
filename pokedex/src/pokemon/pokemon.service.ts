@@ -9,7 +9,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, isValidObjectId } from 'mongoose';
 
 import { CreatePokemonDto, UpdatePokemonDto } from './dto';
-import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { PaginationDto } from '../common/dto/pagination.dto';
 import { Pokemon } from './entities/pokemon.entity';
 
 @Injectable()

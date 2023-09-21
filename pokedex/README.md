@@ -23,7 +23,14 @@ yarn start:dev
 ```
 http://localhost:3000/api/v2/seed
 ```
-
 ## Stack
 * Mongo DB
 * NestJS
+
+# Production build
+1. Create `.env.prod`
+2. Create image
+```
+docker-compose -f docker-compose.prod.yaml --env-file .env.prod up --build
+
+```
