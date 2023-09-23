@@ -3,7 +3,15 @@
 </p>
 
 # Teslo API
-1. Run database
+1. Clone repository
+2. `yarn install`
+3. Clone `.env.template` and rename as `.env`
+4. Add environment variables to `.env`
+5. Run database
 ```
 docker-compose up -d
+```
+6. Run with
+```
+yarn start:dev
 ```
