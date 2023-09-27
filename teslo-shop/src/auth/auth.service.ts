@@ -3,8 +3,9 @@ import {
   Injectable,
   InternalServerErrorException,
   Logger,
+  UnauthorizedException,
 } from '@nestjs/common';
-import { CreateUserDto } from './dto';
+import { CreateUserDto, LoginUserDto } from './dto';
 import { Repository } from 'typeorm';
 import { User } from './entities';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -35,6 +36,23 @@ export class AuthService {
     } catch (error) {
       this.errorHandler(error);
     }
+  }
+
+  async login(loginUserDto: LoginUserDto) {
+    const { email, password } = loginUserDto;
+
+    const user = await this.userRepository.findOne({
+      where: { email },
+      select: { email: true, password: true },
+    });
+
+    if (!user) throw new UnauthorizedException('Invalid credentials');
+
+    const passwordMatch = bcrypt.compareSync(password, user.password);
+
+    if (!passwordMatch) throw new UnauthorizedException(`Invalid credentials`);
+
+    return user;
   }
 
   private errorHandler(error: any) {
