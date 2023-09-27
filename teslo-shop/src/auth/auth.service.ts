@@ -5,11 +5,13 @@ import {
   Logger,
   UnauthorizedException,
 } from '@nestjs/common';
-import { CreateUserDto, LoginUserDto } from './dto';
-import { Repository } from 'typeorm';
-import { User } from './entities';
 import { InjectRepository } from '@nestjs/typeorm';
+import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { Repository } from 'typeorm';
+import { CreateUserDto, LoginUserDto } from './dto';
+import { User } from './entities';
+import { JwtPayload } from './interfaces';
 
 @Injectable()
 export class AuthService {
@@ -18,6 +20,7 @@ export class AuthService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private readonly jwtService: JwtService,
   ) {}
 
   async create(createUserDto: CreateUserDto) {
@@ -32,7 +35,12 @@ export class AuthService {
       await this.userRepository.save(user);
       delete user.password;
 
-      return user;
+      const token = this.getJwt({ email: user.email, id: user.id });
+
+      return {
+        ...user,
+        token,
+      };
     } catch (error) {
       this.errorHandler(error);
     }
@@ -43,7 +51,7 @@ export class AuthService {
 
     const user = await this.userRepository.findOne({
       where: { email },
-      select: { email: true, password: true },
+      select: { email: true, password: true, id: true },
     });
 
     if (!user) throw new UnauthorizedException('Invalid credentials');
@@ -52,7 +60,18 @@ export class AuthService {
 
     if (!passwordMatch) throw new UnauthorizedException(`Invalid credentials`);
 
-    return user;
+    const token = this.getJwt({ email: user.email, id: user.id });
+
+    return {
+      ...user,
+      token,
+    };
+  }
+
+  private getJwt(payload: JwtPayload) {
+    const token = this.jwtService.sign(payload);
+
+    return token;
   }
 
   private errorHandler(error: any) {
