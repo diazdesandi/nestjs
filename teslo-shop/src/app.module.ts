@@ -8,6 +8,7 @@ import { CommonModule } from './common/common.module';
 import { SeedModule } from './seed/seed.module';
 import { FilesModule } from './files/files.module';
 import { AuthModule } from './auth/auth.module';
+import { ChatwsModule } from './chatws/chatws.module';
 
 @Module({
   imports: [
@@ -37,6 +38,8 @@ import { AuthModule } from './auth/auth.module';
     FilesModule,
 
     AuthModule,
+
+    ChatwsModule,
   ],
 })
 export class AppModule {}
