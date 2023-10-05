@@ -22,7 +22,6 @@ export class ChatwsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   async handleConnection(client: Socket) {
     const token = client.handshake.headers.authentication as string;
-    console.log(token);
     let payload: JwtPayload;
     try {
       payload = this.jwtService.verify(token);
@@ -31,7 +30,6 @@ export class ChatwsGateway implements OnGatewayConnection, OnGatewayDisconnect {
       client.disconnect();
       return;
     }
-    console.log(payload);
     this.wss.emit('clients-updated', this.chatwsService.getConnectedClients());
   }
   handleDisconnect(client: Socket) {
