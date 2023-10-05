@@ -1,28 +1,34 @@
 import { Manager, Socket } from "socket.io-client";
 
 const uri = "http://localhost:3000/socket.io/socket.io.js";
+let socket: Socket;
 
-export const connectToServer = () => {
-  const manager = new Manager(uri);
+export const connectToServer = (token: string) => {
+  const manager = new Manager(uri, {
+    extraHeaders: {
+      authentication: token,
+    },
+  });
 
-  const socket = manager.socket("/");
+  socket?.removeAllListeners();
+  socket = manager.socket("/");
 
-  addListeners(socket);
+  addListeners();
 };
 
-const addListeners = (socket: Socket) => {
+const addListeners = () => {
   const clientsUl = document.querySelector<HTMLUListElement>("#client-list")!;
   const messageForm = document.querySelector<HTMLFormElement>("#message-form")!;
   const messageInput =
     document.querySelector<HTMLInputElement>("#message-input")!;
-  const messagesUl = document.querySelector<HTMLUListElement>("#message-list");
+  const messagesUl = document.querySelector<HTMLUListElement>("#message-list")!;
   const serverStatusLabel = document.querySelector("#server-status")!;
 
   socket.on("connect", () => {
     serverStatusLabel.innerHTML = "Connected";
   });
 
-  socket.off("disconnect", () => {
+  socket.on("disconnect", () => {
     serverStatusLabel.innerHTML = "Disconnected";
   });
 
@@ -42,7 +48,7 @@ const addListeners = (socket: Socket) => {
     if (messageInput.value.trim().length <= 0) return;
 
     socket.emit("message-from-client", {
-      id: "A",
+      id: "ID placeholder",
       message: messageInput.value,
     });
 
@@ -61,7 +67,7 @@ const addListeners = (socket: Socket) => {
 
       const li = document.createElement("li");
       li.innerHTML = newMessage;
-      messagesUl?.append(li);
+      messagesUl.append(li);
     }
   );
 };
